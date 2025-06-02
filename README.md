@@ -25,7 +25,7 @@
 - [x] 支持提取（部分）歌曲试听链接 Support retrieving the preview link for (some) songs
 - [x] 支持多种文件编码格式 && 自定义文件名输出 Support multiple character encoding standards and customizable filenames for exporting
 - [x] 支持 LRC 和 SRT 输出格式 Support LRC and SRT formats for exporting
-- [x] 日文歌曲支持罗马音 Support rōmaji in Japanese songs
+- [x] 外文歌曲支持音译歌词 Support transliteration lyrics in foreign songs
 - [x] 支持逐字歌词模式（卡拉OK模式）lyrics synced word-by-word are supported (karaoke mode)
 
 ### Downloads
