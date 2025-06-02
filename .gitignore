@@ -1,6 +1,14 @@
 # Build and Object Folders  
 bin/  
 obj/  
+
+## Avalonia compiled XAML
+.g/
+.g.cs/
+
+## JetBrains Rider cache
+.idea/
+*.sln.iml
   
 # Nuget packages directory  
 packages/  
@@ -13,6 +21,13 @@ packages/
 *.user  
 *.sln.docstates  
   
+## Visual Studio Code
+.vscode/
+
+## OS generated files
+.DS_Store
+Thumbs.db
+
 # Build results  
 [Dd]ebug/  
 [Rr]elease/  
@@ -49,11 +64,31 @@ ipch/
 *.vsp  
 *.vspx  
   
+## Logs
+*.log
+Logs/
+log/
+logs/
+
+## Package directories
+*.nupkg
+*.snupkg
+*.nuspec
+packages/
+*.vsix
+
+## DotNet environment files
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
 # Guidance Automation Toolkit  
 *.gpState  
   
-# ReSharper is a .NET coding add-in  
-_ReSharper*  
+## ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
   
 # NCrunch  
 *.ncrunch*  
@@ -72,8 +107,21 @@ _Pvt_Extensions
 GeneratedArtifacts  
 *.xap  
 ModelManifest.xml  
+
+## Local test results
+TestResults/
   
-#Backup file  
+## Nullable analysis cache (if using Roslyn analyzers)
+**/GeneratedMSBuildEditorConfig.editorconfig
+
+## Avalonia previewer
+Avalonia.Markup.Xaml.Previewer/
+
+## Avalonia font cache
+*.fontconfig
+
+## Backup files
+*~
 *.bak
 
 #zzzili
@@ -81,5 +129,3 @@ v15/
 
 .vs/
 obj/
-
-.idea
