@@ -142,14 +142,28 @@ public class NetEaseMusicApi(Func<string> cookieFunc) : MusicCacheableApi
         
         if (isVerbatim)
         {
-            vo.Lyric = LyricUtils.DealVerbatimLyric4NetEaseMusic(resp.Yrc.Lyric);
+            if (resp.Yrc != null)
+            {
+                vo.Lyric = LyricUtils.DealVerbatimLyric4NetEaseMusic(resp.Yrc.Lyric);
+            }
             // not support translate && Romaj in common mode
         }
         else
         {
-            vo.Lyric = resp.Lrc.Lyric;
-            vo.TranslateLyric = resp.Tlyric.Lyric;
-            vo.RomajLyric = resp.Romalrc.Lyric;
+            if (resp.Lrc != null)
+            {
+                vo.Lyric = resp.Lrc.Lyric;
+            }
+            
+            if (resp.Tlyric != null)
+            {
+                vo.TranslateLyric = resp.Tlyric.Lyric;
+            }
+            
+            if (resp.Romalrc != null)
+            {
+                vo.RomajLyric = resp.Romalrc.Lyric;
+            }
         }
 
         return new ResultVo<LyricVo>(vo);

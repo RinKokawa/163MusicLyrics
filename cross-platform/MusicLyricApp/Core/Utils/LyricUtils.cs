@@ -67,6 +67,11 @@ public static class LyricUtils
 
     public static string ConvertVerbatimLyricToCommonLyric4QQMusic(string input)
     {
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            return string.Empty;
+        }
+        
         var defaultParam = new ConfigBean();
         var sb = new StringBuilder();
 
@@ -101,6 +106,11 @@ public static class LyricUtils
 
     public static string DealVerbatimLyric4QQMusic(string originLrc)
     {
+        if (string.IsNullOrWhiteSpace(originLrc))
+        {
+            return string.Empty;
+        }
+        
         var defaultParam = new ConfigBean();
         var sb = new StringBuilder();
             
@@ -165,6 +175,11 @@ public static class LyricUtils
 
     public static string DealVerbatimLyric4NetEaseMusic(string originLrc)
     {
+        if (string.IsNullOrWhiteSpace(originLrc))
+        {
+            return string.Empty;
+        }
+        
         var defaultParam = new ConfigBean();
         var sb = new StringBuilder();
         
