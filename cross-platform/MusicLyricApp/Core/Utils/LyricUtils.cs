@@ -9,6 +9,7 @@ using hyjiacan.py4n;
 using MusicLyricApp.Core.Service.Translate;
 using MusicLyricApp.Models;
 using NTextCat;
+using ToolGood.Words;
 
 namespace MusicLyricApp.Core.Utils;
 
@@ -52,14 +53,24 @@ public static class LyricUtils
             
         foreach (var voList in voListList)
         {
+            string line;
             if (param.OutputFileFormat == OutputFormatEnum.SRT)
             {
-                res.Add(SrtUtils.LrcToSrt(voList, timestampFormat, dotType, lyricVo.Duration));
+                line = SrtUtils.LrcToSrt(voList, timestampFormat, dotType, lyricVo.Duration);
             }
             else
             {
-                res.Add(string.Join(Environment.NewLine,  from o in voList select o.Print(timestampFormat, dotType)));
+                line = string.Join(Environment.NewLine,  from o in voList select o.Print(timestampFormat, dotType));
             }
+
+            line = config.ChineseProcessRule switch
+            {
+                ChineseProcessRuleEnum.SIMPLIFIED_CHINESE => WordsHelper.ToSimplifiedChinese(line),
+                ChineseProcessRuleEnum.TRADITIONAL_CHINESE => WordsHelper.ToTraditionalChinese(line),
+                _ => line
+            };
+
+            res.Add(line);
         }
 
         return res;
