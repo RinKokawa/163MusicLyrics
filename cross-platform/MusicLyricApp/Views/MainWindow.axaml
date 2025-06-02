@@ -69,7 +69,8 @@
                                   MinWidth="120" />
                     </StackPanel>
 
-                    <TextBox Text="{Binding SearchParamViewModel.SearchText}" Width="222" Height="30" Margin="0,0,8,8" />
+                    <TextBox Name="SearchTextBox" Width="222" Height="30" Margin="0,0,8,8"
+                             Text="{Binding SearchParamViewModel.SearchText}" />
 
                     <Button Content="直链" Width="50" Height="30" Margin="0,0,8,8"
                             Command="{Binding ExecuteSongLinkCommand}" />

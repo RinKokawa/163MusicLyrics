@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
 using Avalonia.Platform.Storage;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
@@ -17,6 +18,8 @@ public partial class MainWindow : Window, IWindowProvider
     {
         InitializeComponent();
         DataContext = new MainWindowViewModel(this);
+        
+        SearchTextBox.PointerEntered += SearchTextBox_PointerEntered;
     }
     
     protected override void OnClosing(WindowClosingEventArgs e)
@@ -50,5 +53,18 @@ public partial class MainWindow : Window, IWindowProvider
     public async Task SetTextAsync(string? text)
     {
         await Clipboard?.SetTextAsync(text)!;
+    }
+    
+    private async void SearchTextBox_PointerEntered(object? sender, PointerEventArgs e)
+    {
+        if (DataContext is not MainWindowViewModel vm) return;
+
+        if (!vm.SettingBean.Config.AutoReadClipboard) return;
+        
+        var message = await Clipboard?.GetTextAsync()!;
+        if (message != null)
+        {
+            vm.SearchParamViewModel.SearchText = message;
+        }
     }
 }

@@ -39,7 +39,7 @@ public partial class MainWindowViewModel : ViewModelBase
         
     private readonly IWindowProvider _windowProvider;
 
-    private readonly SettingBean _settingBean;
+    [ObservableProperty] private SettingBean _settingBean;
     
     private SettingWindow? _settingWindow;
     
@@ -85,7 +85,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public void SaveConfig()
     {
-        _storageService.SaveConfig(_settingBean);
+        _storageService.SaveConfig(SettingBean);
     }
 
     [RelayCommand]
@@ -93,7 +93,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         try
         {
-            _searchService.InitSongIds(SearchParamViewModel, _settingBean);
+            _searchService.InitSongIds(SearchParamViewModel, SettingBean);
 
             var songIds = SearchParamViewModel.SongIds;
             if (songIds.Count == 0)
@@ -101,9 +101,9 @@ public partial class MainWindowViewModel : ViewModelBase
                 throw new MusicLyricException(ErrorMsgConst.SEARCH_RESULT_EMPTY);
             }
 
-            var result = _searchService.SearchSongs(SearchParamViewModel.SongIds, _settingBean);
-            LampVm.UpdateLampInfo(result, _settingBean);
-            await _searchService.RenderSearchResult(SearchParamViewModel, SearchResultViewModel, _settingBean, result);
+            var result = _searchService.SearchSongs(SearchParamViewModel.SongIds, SettingBean);
+            LampVm.UpdateLampInfo(result, SettingBean);
+            await _searchService.RenderSearchResult(SearchParamViewModel, SearchResultViewModel, SettingBean, result);
         }
         catch (Exception ex)
         {
@@ -116,7 +116,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         try
         {
-            var resultVos = _searchService.BlurSearch(SearchParamViewModel, _settingBean);
+            var resultVos = _searchService.BlurSearch(SearchParamViewModel, SettingBean);
 
             if (_blurSearchWindow != null)
             {
@@ -154,7 +154,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         try
         {
-            var message = await _storageService.SaveResult(SearchResultViewModel, _settingBean, _windowProvider);
+            var message = await _storageService.SaveResult(SearchResultViewModel, SettingBean, _windowProvider);
             await DialogHelper.ShowMessage(message);
         }
         catch (Exception ex)
@@ -168,7 +168,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         try
         {
-            var message = _storageService.SaveSongLink(SearchResultViewModel, _settingBean, _windowProvider);
+            var message = _storageService.SaveSongLink(SearchResultViewModel, SettingBean, _windowProvider);
             if (message != ErrorMsgConst.SUCCESS)
             {
                 await DialogHelper.ShowMessage(message);
@@ -185,7 +185,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         try
         {
-            var message = _storageService.SaveSongPic(SearchResultViewModel, _settingBean, _windowProvider);
+            var message = _storageService.SaveSongPic(SearchResultViewModel, SettingBean, _windowProvider);
             if (message != ErrorMsgConst.SUCCESS)
             {
                 await DialogHelper.ShowMessage(message);
@@ -269,7 +269,7 @@ public partial class MainWindowViewModel : ViewModelBase
         }
 
         // 创建新窗口
-        _settingWindow = new SettingWindow(_settingBean);
+        _settingWindow = new SettingWindow(SettingBean);
         _settingWindow.Closed += (_, _) => 
         {
             if (_settingWindow.DataContext is SettingViewModel vm)
