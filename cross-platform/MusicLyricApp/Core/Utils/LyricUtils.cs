@@ -477,10 +477,10 @@ public static class LyricUtils
                 case LyricsTypeEnum.ORIGIN_TRANS:
                     result.Add(transList);
                     break;
-                case LyricsTypeEnum.ROMAJI:
-                    var baseRomajiList = SplitLrc(lyricVo.RomajLyric, searchSource, true);
-                    var romajiList = ResolveTransLyricDigitDeviationAndLost(originList, baseRomajiList, transConfig.MatchPrecisionDeviation, transConfig.LostRule);
-                    result.Add(romajiList);
+                case LyricsTypeEnum.TRANSLITERATION:
+                    var baseTransliterationList = SplitLrc(lyricVo.TransliterationLyric, searchSource, true);
+                    var transliterationList = ResolveTransLyricDigitDeviationAndLost(originList, baseTransliterationList, transConfig.MatchPrecisionDeviation, transConfig.LostRule);
+                    result.Add(transliterationList);
                     break;
                 case LyricsTypeEnum.PINYIN:
                     if (originLanguage == LanguageEnum.CHINESE)

@@ -223,7 +223,7 @@ public class NetEaseMusicNativeApi : BaseNativeApi
             { "lv", "-1" }, // native lyrics
             { "kv", "-1" },
             { "tv", "-1" }, // translated lyrics
-            { "rv", "-1" }, // romaj lyrics
+            { "rv", "-1" }, // transliteration lyrics
             { "yv", "-1" }, // word lyrics
             { "ytv", "-1" }, // word lyrics
             { "yrv", "-1" }, // word lyrics

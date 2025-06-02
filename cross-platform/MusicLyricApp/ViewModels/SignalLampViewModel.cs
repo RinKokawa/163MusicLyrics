@@ -16,16 +16,16 @@ public partial class SignalLampViewModel : ObservableObject
     public void UpdateLampInfo(Dictionary<string, ResultVo<SaveVo>> resDict, SettingBean settingBean)
     {
         var outputTypes = settingBean.Config.DeserializationOutputLyricsTypes();
-        var supportRomaji = outputTypes.Contains(LyricsTypeEnum.ROMAJI);
+        var supportTransliteration = outputTypes.Contains(LyricsTypeEnum.TRANSLITERATION);
 
         var outputDict = new Dictionary<string, int>
         {
             [LyricsTypeEnum.ORIGIN.ToDescription()] = 0,
             [LyricsTypeEnum.ORIGIN_TRANS.ToDescription()] = 0
         };
-        if (supportRomaji)
+        if (supportTransliteration)
         {
-            outputDict[LyricsTypeEnum.ROMAJI.ToDescription()] = 0;
+            outputDict[LyricsTypeEnum.TRANSLITERATION.ToDescription()] = 0;
         }
 
         foreach (var lyricVo in from pair in resDict
@@ -44,9 +44,9 @@ public partial class SignalLampViewModel : ObservableObject
                 outputDict[LyricsTypeEnum.ORIGIN_TRANS.ToDescription()]++;
             }
 
-            if (supportRomaji && !string.IsNullOrEmpty(lyricVo.RomajLyric))
+            if (supportTransliteration && !string.IsNullOrEmpty(lyricVo.TransliterationLyric))
             {
-                outputDict[LyricsTypeEnum.ROMAJI.ToDescription()]++;
+                outputDict[LyricsTypeEnum.TRANSLITERATION.ToDescription()]++;
             }
         }
 

@@ -68,7 +68,7 @@ public enum LyricsTypeEnum
     [Description("原始译文")] ORIGIN_TRANS = 1,
     [Description("中文译文")] CHINESE = 2,
     [Description("英文译文")] ENGLISH = 3,
-    [Description("罗马音译文")] ROMAJI = 4,
+    [Description("音译文")] TRANSLITERATION = 4,
     [Description("拼音译文")] PINYIN = 5,
 }
 
@@ -371,9 +371,9 @@ public class LyricVo
     public string TranslateLyric = "";
 
     /// <summary>
-    /// 罗马音歌词内容
+    /// 音译歌词内容
     /// </summary>
-    public string RomajLyric = "";
+    public string TransliterationLyric = "";
 
     /// <summary>
     /// 歌曲时长 ms
@@ -387,7 +387,7 @@ public class LyricVo
     {
         return string.IsNullOrEmpty(Lyric) &&
                string.IsNullOrEmpty(TranslateLyric) &&
-               string.IsNullOrEmpty(RomajLyric);
+               string.IsNullOrEmpty(TransliterationLyric);
     }
 
     /// <summary>
