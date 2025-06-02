@@ -146,7 +146,7 @@ public class NetEaseMusicApi(Func<string> cookieFunc) : MusicCacheableApi
             {
                 vo.Lyric = LyricUtils.DealVerbatimLyric4NetEaseMusic(resp.Yrc.Lyric);
             }
-            // not support translate && Transliteration in common mode
+            // not support translate && Romaj in common mode
         }
         else
         {
@@ -154,12 +154,10 @@ public class NetEaseMusicApi(Func<string> cookieFunc) : MusicCacheableApi
             {
                 vo.Lyric = resp.Lrc.Lyric;
             }
-            
             if (resp.Tlyric != null)
             {
                 vo.TranslateLyric = resp.Tlyric.Lyric;
             }
-            
             if (resp.Romalrc != null)
             {
                 vo.TransliterationLyric = resp.Romalrc.Lyric;
