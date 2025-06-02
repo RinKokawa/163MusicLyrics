@@ -4,6 +4,12 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Email](https://img.shields.io/badge/Email-jitwxs%40foxmail.com-brightgreen)](#)
 
+### Important Announcement
+
+为了满足后续功能需要，我们将更换技术栈以支持跨平台等其他现代化特性。[v6.5](https://github.com/jitwxs/163MusicLyrics/releases/tag/v6.5) 为基于 Winform 架构的最后一个版本。
+
+如果您在使用新版本的过程中遇到任何问题，请提交 [Issues](https://github.com/jitwxs/163MusicLyrics/issues) 进行反馈，在此期间可回退到老版本进行兼容。
+
 ### How To Use
 
 [👉163MusicLyrics User Guide](https://github.com/jitwxs/163MusicLyrics/wiki)
@@ -20,7 +26,7 @@
 - [x] 支持多种文件编码格式 && 自定义文件名输出 Support multiple character encoding standards and customizable filenames for exporting
 - [x] 支持 LRC 和 SRT 输出格式 Support LRC and SRT formats for exporting
 - [x] 日文歌曲支持罗马音 Support rōmaji in Japanese songs
-- [x] QQ音乐支持逐字歌词模式（卡拉OK模式）In QQ Music, lyrics synced word-by-word are supported (karaoke mode)
+- [x] 支持逐字歌词模式（卡拉OK模式）lyrics synced word-by-word are supported (karaoke mode)
 
 ### Downloads
 
@@ -79,6 +85,8 @@ maintained personally, all features are free. If you would like to treat the cre
 
 | username     | donate    | platform | date       |
 |:-------------|:----------|:-------|:-----------|
+| *康   | 5 CNY     | wechat | 2025-03-02 |
+| 进击的咕哒子   | 10 CNY     | wechat | 2025-02-22 |
 | 张大师          | 3 CNY     | wechat | 2024-12-26 |
 | * TUYA       | 8 CNY     | alipay | 2024-12-24 |
 | Q*L          | 1.66 CNY  | wechat | 2024-12-22 |
@@ -138,8 +146,8 @@ maintained personally, all features are free. If you would like to treat the cre
     <img src="https://cdn.jsdelivr.net/gh/jitwxs/cdn/blog/configuration/wechat_donate_full.jpg" height="200" style="float:left">
 </div>
 
-最后，感谢 JetBrains 为本项目提供 IDE 赞助。
+最后，感谢 JetBrains 为开源项目提供免费的 IDE 支持。
 
-Lastly, thanks to JetBrains for sponsoring the IDE for this project.
+Lastly, thanks to JetBrains for sponsoring the IDE for open-sources project.
 
 ![Rider logo](https://resources.jetbrains.com/storage/products/company/brand/logos/Rider_icon.svg)
