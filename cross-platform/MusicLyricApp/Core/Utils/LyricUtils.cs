@@ -324,11 +324,13 @@ public static class LyricUtils
 
     private static string[] SplitLrc(string lrc)
     {
-        // 换行符统一
         return (lrc ?? "")
             .Replace("\r\n", "\n")
             .Replace("\r", "")
-            .Split('\n');
+            .Split('\n')
+            .Select(line => line.Trim())               // 去除行首尾空白
+            .Where(line => !string.IsNullOrEmpty(line)) // 过滤空行
+            .ToArray();
     }
 
     /**
