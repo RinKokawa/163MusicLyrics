@@ -31,7 +31,7 @@ public partial class MainWindowViewModel : ViewModelBase
     
     public SignalLampViewModel LampVm { get; } = new();
 
-    [ObservableProperty] private string _appTitle = "MusicLyricApp v7.0";
+    [ObservableProperty] private string _appTitle = "MusicLyricApp v7.1";
 
     private readonly SearchService _searchService;
 
