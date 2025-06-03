@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using MusicLyricApp.Core.Service;
@@ -22,27 +23,31 @@ public partial class MainWindow : Window, IWindowProvider
         SearchTextBox.PointerEntered += SearchTextBox_PointerEntered;
     }
     
-    protected override void OnClosing(WindowClosingEventArgs e)
+    protected override async void OnClosing(WindowClosingEventArgs e)
     {
         base.OnClosing(e);
 
         if (DataContext is not MainWindowViewModel vm) return;
-        
-        // 阻止当前关闭流程，异步处理确认
+
+        // 阻止默认关闭
         e.Cancel = true;
-        
+
+        // 弹出消息框（同步等待）
         var box = MessageBoxManager.GetMessageBoxStandard("退出提示", "你确定要退出吗？", ButtonEnum.YesNo);
-        box.ShowAsync().ContinueWith(task =>
+        var result = await box.ShowAsync();
+
+        if (result == ButtonResult.Yes)
         {
-            if (task.Result == ButtonResult.Yes)
+            vm.SaveConfig();
+
+            Dispatcher.UIThread.Post(() =>
             {
                 if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
                 {
-                    vm.SaveConfig();
                     lifetime.Shutdown();
                 }
-            }
-        });
+            });
+        }
     }
 
     public async Task<IReadOnlyList<IStorageFolder>> OpenFolderPickerAsync(FolderPickerOpenOptions options)
