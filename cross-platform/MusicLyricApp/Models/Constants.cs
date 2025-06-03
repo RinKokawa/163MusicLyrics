@@ -1,11 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace MusicLyricApp.Models;
 
 public static class Constants
 {
-    public static readonly string SettingPath = Environment.CurrentDirectory + "\\MusicLyricAppSetting.json";
+    private const string AppFolderName = "MusicLyricApp";
+    private const string ConfigFileName = "MusicLyricAppSetting.json";
+
+    /// <summary>
+    /// 获取用户配置文件的完整路径，确保目录存在。
+    /// </summary>
+    public static string GetConfigFilePath()
+    {
+        string basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
+        // macOS/Linux 会自动转换为 ~/Library/Application Support 或 ~/.config
+        string configDir = Path.Combine(basePath, AppFolderName);
+
+        // 确保目录存在
+        Directory.CreateDirectory(configDir);
+
+        return Path.Combine(configDir, ConfigFileName);
+    }
 
     public const int BatchQuerySize = 300;
 

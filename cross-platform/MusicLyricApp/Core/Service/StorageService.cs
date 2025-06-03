@@ -7,6 +7,7 @@ using Avalonia.Platform.Storage;
 using MusicLyricApp.Core.Utils;
 using MusicLyricApp.Models;
 using MusicLyricApp.ViewModels;
+using NLog;
 
 namespace MusicLyricApp.Core.Service;
 
@@ -14,6 +15,8 @@ public class StorageService : IStorageService
 {
     private ISearchService _searchService;
 
+    private readonly Logger _logger = LogManager.GetCurrentClassLogger();
+    
     public void SetSearchService(ISearchService searchService)
     {
         _searchService = searchService;
@@ -21,9 +24,9 @@ public class StorageService : IStorageService
 
     public SettingBean ReadAppConfig()
     {
-        if (File.Exists(Constants.SettingPath))
+        if (File.Exists(Constants.GetConfigFilePath()))
         {
-            var text = File.ReadAllText(Constants.SettingPath);
+            var text = File.ReadAllText(Constants.GetConfigFilePath());
             return text.ToEntity<SettingBean>();
         }
         else
@@ -34,7 +37,9 @@ public class StorageService : IStorageService
 
     public void SaveConfig(SettingBean settingBean)
     {
-        File.WriteAllText(Constants.SettingPath, settingBean.ToJson(), Encoding.UTF8);
+        var path = Constants.GetConfigFilePath();
+        File.WriteAllText(path, settingBean.ToJson(), Encoding.UTF8);
+        _logger.Info("Save config into {Path}", path);
     }
 
     public Task<string> SaveResult(SearchResultViewModel searchResult, SettingBean settingBean,
