@@ -10,7 +10,7 @@ if [ -z "$1" ]; then
 fi
 
 version="$1"
-app_name="MusicLyric"
+app_name="MusicLyricApp"
 project_path="./MusicLyricApp/MusicLyricApp.csproj"
 output_root="publish"
 
@@ -23,22 +23,20 @@ targets=(
 
 trap 'echo "❌ An error occurred. Exiting."' ERR
 
-for target in "${targets[@]}"
-do
+for target in "${targets[@]}"; do
   echo -e "\n-----------------------------"
   echo "📦 Publishing for $target..."
 
   output_dir="$output_root/$target"
   dotnet publish "$project_path" \
     -c Release \
-    -r $target \
+    -r "$target" \
     --self-contained true \
     -p:DebugType=None \
     -p:PublishSingleFile=true \
     -p:IncludeNativeLibrariesForSelfExtract=true \
     -o "$output_dir"
 
-  # Rename Windows exe for clarity
   if [[ "$target" == win-* ]]; then
     ext=".exe"
     original_file=$(find "$output_dir" -type f -name "*$ext" -print -quit)
@@ -50,9 +48,13 @@ do
     fi
   fi
 
+  # Compress and remove original directory
   archive_name="${app_name}-${version}-${target}.tar.gz"
   tar -czf "$output_root/$archive_name" -C "$output_dir" .
-  echo "🗜️  Compressed all files in $output_dir to $archive_name"
+  echo "🗜️  Compressed to $archive_name"
+
+  echo "🧹 Removing $output_dir..."
+  rm -rf "$output_dir"
 done
 
-echo -e "\n🎉 All done. Archives are in the '$output_root/' folder."
+echo -e "\n🎉 Done. Transfer macOS .tar.gz archives to macOS and run 'build-macos-app.sh'."
