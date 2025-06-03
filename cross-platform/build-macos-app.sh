@@ -13,23 +13,22 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-version="$1"
-app_name="MusicLyricApp"
-output_root="publish"
-targets=("osx-x64" "osx-arm64")
+readonly version="$1"
+readonly app_name="MusicLyricApp"
+readonly output_root="publish"
+readonly targets=("osx-x64" "osx-arm64")
 
 any_processed=false
 
 for target in "${targets[@]}"; do
   archive_path="$output_root/${app_name}-${version}-${target}.tar.gz"
 
-  # Skip if archive not found
   if [ ! -f "$archive_path" ]; then
-    echo "⚠️  Archive not found for $target: skipping."
+    echo "⚠️  Archive not found for $target, skipping..."
     continue
   fi
 
-  echo -e "\n📦 Processing target: $target"
+  echo -e "\n📦 Processing: $target"
 
   extract_dir="$output_root/$target"
   mkdir -p "$extract_dir"
@@ -67,20 +66,23 @@ for target in "${targets[@]}"; do
 EOF
 
   echo "🔐 Signing .app with ad-hoc identity..."
-  codesign --force --deep --timestamp=none --sign - "$app_bundle"
+  if ! codesign --force --deep --timestamp=none --sign - "$app_bundle"; then
+    echo "❌ codesign failed. Ensure Xcode Command Line Tools are installed."
+    exit 1
+  fi
 
   final_archive="$output_root/${app_name}-${version}-${target}-app.tar.gz"
   echo "🗜️  Compressing .app to $final_archive..."
   tar -czf "$final_archive" -C "$output_root" "$(basename "$app_bundle")"
 
-  echo "🧹 Cleaning up temporary files..."
+  echo "🧹 Cleaning up..."
   rm -rf "$app_bundle" "$extract_dir"
 
   any_processed=true
 done
 
-if [ "$any_processed" = true ]; then
-  echo -e "\n🎉 Done! Processed .app bundles are in '$output_root/'"
+if [[ "$any_processed" == true ]]; then
+  echo -e "\n✅ All done! Bundles available in '$output_root/'"
 else
-  echo "❌ No valid archives found for any target. Nothing to process."
+  echo "❌ No valid archives found. Nothing was processed."
 fi
