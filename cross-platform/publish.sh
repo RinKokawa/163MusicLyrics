@@ -46,14 +46,6 @@ for target in "${targets[@]}"; do
       mv "$original_file" "$output_dir/$new_filename"
       echo "✅ Renamed Windows executable to: $new_filename"
     fi
-  elif [[ "$target" == linux-* ]]; then
-    bin_path="$output_dir/$app_name"
-    if [[ -f "$bin_path" ]]; then
-      chmod +x "$bin_path"
-      echo "🔧 Set executable permission for Linux binary: $app_name"
-    else
-      echo "⚠️  Linux binary not found at: $bin_path"
-    fi
   fi
 
   archive_name="${app_name}-${version}-${target}.tar.gz"
