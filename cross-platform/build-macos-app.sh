@@ -1,11 +1,13 @@
 #!/bin/bash
 set -e
 
+# Ensure we're running on macOS
 if [[ "$(uname)" != "Darwin" ]]; then
   echo "❌ This script must be run on macOS."
   exit 1
 fi
 
+# Ensure version is provided
 if [ -z "$1" ]; then
   echo "❌ Usage: $0 <version>"
   exit 1
@@ -16,24 +18,26 @@ app_name="MusicLyricApp"
 output_root="publish"
 targets=("osx-x64" "osx-arm64")
 
+any_processed=false
+
 for target in "${targets[@]}"; do
-  echo -e "\n📦 Processing $target..."
-
   archive_path="$output_root/${app_name}-${version}-${target}.tar.gz"
-  extract_dir="$output_root/$target"
 
+  # Skip if archive not found
   if [ ! -f "$archive_path" ]; then
-    echo "❌ Missing archive: $archive_path"
-    exit 1
+    echo "⚠️  Archive not found for $target: skipping."
+    continue
   fi
 
-  echo "📂 Extracting $archive_path..."
+  echo -e "\n📦 Processing target: $target"
+
+  extract_dir="$output_root/$target"
   mkdir -p "$extract_dir"
   tar -xzf "$archive_path" -C "$extract_dir"
 
-  echo "🍎 Building .app bundle..."
-  app_dir="$output_root/${app_name}-${version}-${target}.app"
-  contents_dir="$app_dir/Contents"
+  echo "🍎 Creating .app bundle..."
+  app_bundle="$output_root/${app_name}-${version}-${target}.app"
+  contents_dir="$app_bundle/Contents"
   macos_dir="$contents_dir/MacOS"
   resources_dir="$contents_dir/Resources"
 
@@ -41,6 +45,7 @@ for target in "${targets[@]}"; do
   cp -R "$extract_dir"/* "$macos_dir/"
   chmod +x "$macos_dir/$app_name"
 
+  # Create Info.plist
   cat > "$contents_dir/Info.plist" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
@@ -61,15 +66,21 @@ for target in "${targets[@]}"; do
 </plist>
 EOF
 
-  echo "🔐 Signing with ad-hoc identity..."
-  codesign --force --deep --timestamp=none --sign - "$app_dir"
+  echo "🔐 Signing .app with ad-hoc identity..."
+  codesign --force --deep --timestamp=none --sign - "$app_bundle"
 
-  echo "🗜️  Compressing .app to tar.gz..."
-  tar -czf "$output_root/${app_name}-${version}-${target}-app.tar.gz" -C "$output_root" "$(basename "$app_dir")"
+  final_archive="$output_root/${app_name}-${version}-${target}-app.tar.gz"
+  echo "🗜️  Compressing .app to $final_archive..."
+  tar -czf "$final_archive" -C "$output_root" "$(basename "$app_bundle")"
 
-  echo "🧹 Cleaning up .app and extracted files..."
-  rm -rf "$app_dir"
-  rm -rf "$extract_dir"
+  echo "🧹 Cleaning up temporary files..."
+  rm -rf "$app_bundle" "$extract_dir"
+
+  any_processed=true
 done
 
-echo -e "\n✅ Done! .tar.gz app bundles are in $output_root/"
+if [ "$any_processed" = true ]; then
+  echo -e "\n🎉 Done! Processed .app bundles are in '$output_root/'"
+else
+  echo "❌ No valid archives found for any target. Nothing to process."
+fi

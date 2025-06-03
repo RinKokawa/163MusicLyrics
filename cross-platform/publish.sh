@@ -6,6 +6,7 @@ rm -rf publish/*
 
 if [ -z "$1" ]; then
   echo "❌ Usage: $0 <version>"
+  echo "👉 Example: ./build-all.sh 1.2.3"
   exit 1
 fi
 
@@ -42,19 +43,26 @@ for target in "${targets[@]}"; do
     original_file=$(find "$output_dir" -type f -name "*$ext" -print -quit)
     if [[ -n "$original_file" ]]; then
       new_filename="${app_name}-${version}-${target}${ext}"
-      new_filepath="${output_dir}/${new_filename}"
-      mv "$original_file" "$new_filepath"
-      echo "✅ Renamed Windows exe to: $new_filename"
+      mv "$original_file" "$output_dir/$new_filename"
+      echo "✅ Renamed Windows executable to: $new_filename"
+    fi
+  elif [[ "$target" == linux-* ]]; then
+    bin_path="$output_dir/$app_name"
+    if [[ -f "$bin_path" ]]; then
+      chmod +x "$bin_path"
+      echo "🔧 Set executable permission for Linux binary: $app_name"
+    else
+      echo "⚠️  Linux binary not found at: $bin_path"
     fi
   fi
 
-  # Compress and remove original directory
   archive_name="${app_name}-${version}-${target}.tar.gz"
   tar -czf "$output_root/$archive_name" -C "$output_dir" .
-  echo "🗜️  Compressed to $archive_name"
+  echo "🗜️  Compressed to: $archive_name"
 
-  echo "🧹 Removing $output_dir..."
+  echo "🧹 Removing intermediate directory: $output_dir"
   rm -rf "$output_dir"
 done
 
-echo -e "\n🎉 Done. Transfer macOS .tar.gz archives to macOS and run 'build-macos-app.sh'."
+echo -e "\n✅ All targets published and compressed."
+echo "💡 To package macOS .app, copy the .tar.gz files to a macOS machine and run: ./build-macos-app.sh $version"
