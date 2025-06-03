@@ -24,7 +24,7 @@ public static class LyricUtils
     
     public static readonly Regex VerbatimLegalPrefixRegex = new(@"\[\d+,\d+\]");
     
-    public static readonly Regex CommonLegalPrefixRegex = new(@"\[\d+:\d+.\d+\]");
+    public static readonly Regex CommonLegalPrefixRegex = new(@"\[\d+:\d+(?:\.\d+)?\]");
         
     private const PinyinFormat PinyinDefineFormat = PinyinFormat.WITH_TONE_MARK  | PinyinFormat.LOWERCASE | PinyinFormat.WITH_U_UNICODE;
         
