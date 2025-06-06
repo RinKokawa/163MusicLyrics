@@ -24,6 +24,8 @@ targets=(
 
 trap 'echo "❌ An error occurred. Exiting."' ERR
 
+mkdir -p "$output_root"
+
 for target in "${targets[@]}"; do
   echo -e "\n-----------------------------"
   echo "📦 Publishing for $target..."
@@ -48,7 +50,13 @@ for target in "${targets[@]}"; do
     fi
   fi
 
-  archive_name="${app_name}-${version}-${target}.tar.gz"
+  # Determine archive name
+  if [[ "$target" == osx-* ]]; then
+    archive_name="${app_name}-${version}-${target}-mid.tar.gz"
+  else
+    archive_name="${app_name}-${version}-${target}.tar.gz"
+  fi
+
   tar -czf "$output_root/$archive_name" -C "$output_dir" .
   echo "🗜️  Compressed to: $archive_name"
 
@@ -57,4 +65,4 @@ for target in "${targets[@]}"; do
 done
 
 echo -e "\n✅ All targets published and compressed."
-echo "💡 To package macOS .app, copy the .tar.gz files to a macOS machine and run: ./build-macos-app.sh $version"
+echo "💡 To package macOS .app, copy the -mid tar.gz files to a macOS machine and run: ./build-macos-app.sh $version"

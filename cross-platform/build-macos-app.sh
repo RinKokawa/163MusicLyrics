@@ -21,9 +21,9 @@ readonly targets=("osx-x64" "osx-arm64")
 any_processed=false
 
 for target in "${targets[@]}"; do
-  archive_path="$output_root/${app_name}-${version}-${target}.tar.gz"
+  archive_mid_path="$output_root/${app_name}-${version}-${target}-mid.tar.gz"
 
-  if [ ! -f "$archive_path" ]; then
+  if [ ! -f "$archive_mid_path" ]; then
     echo "⚠️  Archive not found for $target, skipping..."
     continue
   fi
@@ -32,7 +32,7 @@ for target in "${targets[@]}"; do
 
   extract_dir="$output_root/$target"
   mkdir -p "$extract_dir"
-  tar -xzf "$archive_path" -C "$extract_dir"
+  tar -xzf "$archive_mid_path" -C "$extract_dir"
 
   echo "🍎 Creating .app bundle..."
   app_bundle="$output_root/${app_name}-${version}-${target}.app"
@@ -71,18 +71,18 @@ EOF
     exit 1
   fi
 
-  final_archive="$output_root/${app_name}-${version}-${target}-app.tar.gz"
+  final_archive="$output_root/${app_name}-${version}-${target}.tar.gz"
   echo "🗜️  Compressing .app to $final_archive..."
   tar -czf "$final_archive" -C "$output_root" "$(basename "$app_bundle")"
 
-  echo "🧹 Cleaning up..."
-  rm -rf "$app_bundle" "$extract_dir"
+  echo "🧹 Cleaning up intermediate files..."
+  rm -rf "$app_bundle" "$extract_dir" "$archive_mid_path"
 
   any_processed=true
 done
 
 if [[ "$any_processed" == true ]]; then
-  echo -e "\n✅ All done! Bundles available in '$output_root/'"
+  echo -e "\n✅ All done! Final archives available in '$output_root/'"
 else
   echo "❌ No valid archives found. Nothing was processed."
 fi
