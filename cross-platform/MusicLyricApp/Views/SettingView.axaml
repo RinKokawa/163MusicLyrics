@@ -189,8 +189,7 @@
             </Expander>
 
             <!-- 提示区域 -->
-            <TextBox Text="{Binding SettingTips}" IsReadOnly="True" AcceptsReturn="True" Height="200"
-                     Background="LightYellow" />
+            <TextBox Text="{Binding SettingTips}" IsReadOnly="True" AcceptsReturn="True" Height="200" />
         </StackPanel>
     </ScrollViewer>
 </UserControl>
