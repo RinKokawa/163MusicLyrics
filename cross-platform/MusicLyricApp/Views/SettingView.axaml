@@ -167,6 +167,10 @@
                         <CheckBox Content="自动检查更新"
                                   IsChecked="{Binding SettingParamViewModel.AutoCheckUpdate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                   Margin="0,0,8,8" />
+                        <TextBlock Text="主题：" Margin="0,0,8,8" VerticalAlignment="Center" />
+                        <ComboBox ItemsSource="{Binding SettingParamViewModel.ThemeModeRules}"
+                                  SelectedItem="{Binding SettingParamViewModel.SelectedThemeModeRuleItem}"
+                                  Width="110" Margin="0,0,8,8" />
                     </WrapPanel>
 
                     <TextBlock Text="网易云 Cookie：" Margin="0,0,8,8" VerticalAlignment="Center" />

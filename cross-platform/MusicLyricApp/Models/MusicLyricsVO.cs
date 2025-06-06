@@ -80,6 +80,13 @@ public enum LyricsTypeEnum
     [Description("拼音译文")] PINYIN = 5,
 }
 
+public enum ThemeModeEnum
+{
+    [Description("跟随系统")] FOLLOW_SYSTEM = 0,
+    [Description("亮色")] LIGHT = 1,
+    [Description("暗黑")] DARK = 2,
+}
+
 public enum LanguageEnum
 {
     /// <summary>

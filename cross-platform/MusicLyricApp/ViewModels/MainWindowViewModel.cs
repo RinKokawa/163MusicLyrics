@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -70,6 +71,8 @@ public partial class MainWindowViewModel : ViewModelBase
                 _blurSearchWindow = null;
             }
         });
+        
+        UpdateTheme();
         
         if (_settingBean.Config.AutoCheckUpdate)
         {
@@ -278,6 +281,7 @@ public partial class MainWindowViewModel : ViewModelBase
             if (_settingWindow.DataContext is SettingViewModel vm)
             {
                 vm.OnClosing();
+                UpdateTheme();
             }
             _settingWindow = null;
         };
@@ -369,5 +373,10 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             _inCheckVersion = false;
         }
+    }
+
+    private void UpdateTheme()
+    {
+        ((App)Application.Current!).SetTheme(SettingBean.Config.ThemeMode);
     }
 }

@@ -3,6 +3,8 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
+using MusicLyricApp.Models;
 using MusicLyricApp.Views;
 
 namespace MusicLyricApp;
@@ -12,6 +14,17 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+    }
+    
+    public void SetTheme(ThemeModeEnum mode)
+    {
+        RequestedThemeVariant = mode switch
+        {
+            ThemeModeEnum.LIGHT => ThemeVariant.Light,
+            ThemeModeEnum.DARK => ThemeVariant.Dark,
+            ThemeModeEnum.FOLLOW_SYSTEM => ThemeVariant.Default,
+            _ => RequestedThemeVariant
+        };
     }
 
     public override void OnFrameworkInitializationCompleted()

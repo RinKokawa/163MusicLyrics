@@ -43,6 +43,8 @@ public class ConfigBean
     /// </summary>
     public ChineseProcessRuleEnum ChineseProcessRule = ChineseProcessRuleEnum.IGNORE;
 
+    public ThemeModeEnum ThemeMode = ThemeModeEnum.FOLLOW_SYSTEM;
+    
     /// <summary>
     /// 多个歌手的分隔符
     /// </summary>
