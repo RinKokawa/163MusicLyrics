@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MusicLyricApp.Core;
 using MusicLyricApp.Models;
+using NLog;
 
 namespace MusicLyricApp.ViewModels;
 
@@ -14,10 +18,14 @@ public partial class SettingViewModel : ViewModelBase
     public ObservableCollection<LyricsTypeEnumModel> LyricsTypes { get; } = [];
 
     [ObservableProperty] private LyricsTypeEnumModel? _selectedLyricsTypeItem;
+    
+    [ObservableProperty] private string _configPath = Constants.GetConfigFilePath();
 
     public SettingParamViewModel SettingParamViewModel { get; } = new();
 
     private readonly SettingBean _settingBean;
+    
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     public SettingViewModel(SettingBean settingBean)
     {
@@ -98,5 +106,28 @@ public partial class SettingViewModel : ViewModelBase
     private void OutputTips()
     {
         SettingTips = Constants.HelpTips.GetContent(Constants.HelpTips.TypeEnum.OUTPUT_SETTING);
+    }
+
+    [RelayCommand]
+    private void OpenConfigPath()
+    {
+        if (!File.Exists(ConfigPath)) return;
+        
+        var folder = Path.GetDirectoryName(ConfigPath);
+        if (folder == null) return;
+        
+        try
+        {
+            using var _ = Process.Start(new ProcessStartInfo
+            {
+                FileName = folder,
+                UseShellExecute = true
+            });
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "OpenConfigPath error");
+            throw new MusicLyricException(ErrorMsgConst.STORAGE_FOLDER_ERROR);
+        }
     }
 }

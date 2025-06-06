@@ -230,7 +230,7 @@ public static class GlobalUtils
         }
         catch (Exception e)
         {
-            Logger.Error("ResolveCustomFunction error, content: " + sourceContent + ", stack: " + e);
+            Logger.Error(e, "ResolveCustomFunction error, content: " + sourceContent);
             return sourceContent;
         }
     }

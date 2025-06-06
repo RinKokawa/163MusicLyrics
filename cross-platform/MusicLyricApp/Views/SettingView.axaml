@@ -156,7 +156,7 @@
             
             <!-- 应用设置 -->
             <Expander Header="应用设置" HorizontalAlignment="Stretch">
-                <StackPanel Spacing="5">
+                <StackPanel Spacing="6">
                     <WrapPanel>
                         <CheckBox Content="聚合模糊搜索"
                                   IsChecked="{Binding SettingParamViewModel.AggregatedBlurSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -178,6 +178,13 @@
                     <TextBox
                         Text="{Binding SettingParamViewModel.QqMusicCookie, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Margin="0,0,8,8" />
+                    
+                    <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
+                        <TextBlock Text="配置文件：" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding ConfigPath}" IsReadOnly="True"  Width="400" VerticalAlignment="Center"/>
+                        <Button Content="打开" Width="50" Command="{Binding OpenConfigPathCommand}" 
+                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    </StackPanel>
                 </StackPanel>
             </Expander>
 
