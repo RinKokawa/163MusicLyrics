@@ -62,6 +62,14 @@ public enum TransLyricLostRuleEnum
     [Description("填充原文")] FILL_ORIGIN = 2,
 }
 
+// 中文处理策略
+public enum ChineseProcessRuleEnum
+{
+    [Description("不额外处理")] IGNORE = 0,
+    [Description("强制简体")] SIMPLIFIED_CHINESE = 1,
+    [Description("强制繁体")] TRADITIONAL_CHINESE = 2,
+}
+
 public enum LyricsTypeEnum
 {
     [Description("原文")] ORIGIN = 0,
@@ -70,6 +78,13 @@ public enum LyricsTypeEnum
     [Description("英文译文")] ENGLISH = 3,
     [Description("音译文")] TRANSLITERATION = 4,
     [Description("拼音译文")] PINYIN = 5,
+}
+
+public enum ThemeModeEnum
+{
+    [Description("跟随系统")] FOLLOW_SYSTEM = 0,
+    [Description("亮色")] LIGHT = 1,
+    [Description("暗黑")] DARK = 2,
 }
 
 public enum LanguageEnum

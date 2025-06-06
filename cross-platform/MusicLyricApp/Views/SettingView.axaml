@@ -13,9 +13,13 @@
             <Expander Header="歌词设置" HorizontalAlignment="Stretch">
                 <StackPanel Spacing="8">
                     <WrapPanel>
-                        <CheckBox Content="逐字歌词"
-                                  IsChecked="{Binding SettingParamViewModel.EnableVerbatimLyric, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                  Margin="0,0,8,8" />
+                        <TextBlock Text="中文处理：" Width="100" Margin="0,0,8,8" VerticalAlignment="Center" />
+                        <ComboBox ItemsSource="{Binding SettingParamViewModel.ChineseProcessRules}"
+                                  SelectedItem="{Binding SettingParamViewModel.SelectedChineseProcessRuleItem}"
+                                  Width="120" Margin="0,0,8,8" />
+                        
+                        <CheckBox Content="逐字歌词" Width="100" Margin="0,0,8,8" 
+                                  IsChecked="{Binding SettingParamViewModel.EnableVerbatimLyric, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         
                         <CheckBox Content="跳过空白歌词行"
                                   IsChecked="{Binding SettingParamViewModel.IgnoreEmptyLyric, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -26,7 +30,7 @@
                         <TextBlock Text="译文缺省规则：" Width="100" Margin="0,0,8,8" VerticalAlignment="Center" />
                         <ComboBox ItemsSource="{Binding SettingParamViewModel.TransLyricLostRules}"
                                   SelectedItem="{Binding SettingParamViewModel.SelectedTransLyricLostRuleItem}"
-                                  Width="100" Margin="0,0,8,8" />
+                                  Width="120" Margin="0,0,8,8" />
                         
                         <TextBlock Text="译文匹配精度：" Width="100" Margin="0,0,8,8" VerticalAlignment="Center" />
                         <TextBox
@@ -152,7 +156,7 @@
             
             <!-- 应用设置 -->
             <Expander Header="应用设置" HorizontalAlignment="Stretch">
-                <StackPanel Spacing="5">
+                <StackPanel Spacing="6">
                     <WrapPanel>
                         <CheckBox Content="聚合模糊搜索"
                                   IsChecked="{Binding SettingParamViewModel.AggregatedBlurSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -163,6 +167,10 @@
                         <CheckBox Content="自动检查更新"
                                   IsChecked="{Binding SettingParamViewModel.AutoCheckUpdate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                   Margin="0,0,8,8" />
+                        <TextBlock Text="主题：" Margin="0,0,8,8" VerticalAlignment="Center" />
+                        <ComboBox ItemsSource="{Binding SettingParamViewModel.ThemeModeRules}"
+                                  SelectedItem="{Binding SettingParamViewModel.SelectedThemeModeRuleItem}"
+                                  Width="110" Margin="0,0,8,8" />
                     </WrapPanel>
 
                     <TextBlock Text="网易云 Cookie：" Margin="0,0,8,8" VerticalAlignment="Center" />
@@ -174,12 +182,18 @@
                     <TextBox
                         Text="{Binding SettingParamViewModel.QqMusicCookie, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Margin="0,0,8,8" />
+                    
+                    <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
+                        <TextBlock Text="配置文件：" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding ConfigPath}" IsReadOnly="True"  Width="400" VerticalAlignment="Center"/>
+                        <Button Content="打开" Width="50" Command="{Binding OpenConfigPathCommand}" 
+                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    </StackPanel>
                 </StackPanel>
             </Expander>
 
             <!-- 提示区域 -->
-            <TextBox Text="{Binding SettingTips}" IsReadOnly="True" AcceptsReturn="True" Height="200"
-                     Background="LightYellow" />
+            <TextBox Text="{Binding SettingTips}" IsReadOnly="True" AcceptsReturn="True" Height="200" />
         </StackPanel>
     </ScrollViewer>
 </UserControl>

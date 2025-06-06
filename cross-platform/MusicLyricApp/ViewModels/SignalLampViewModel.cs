@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Avalonia.Media;
@@ -16,37 +17,33 @@ public partial class SignalLampViewModel : ObservableObject
     public void UpdateLampInfo(Dictionary<string, ResultVo<SaveVo>> resDict, SettingBean settingBean)
     {
         var outputTypes = settingBean.Config.DeserializationOutputLyricsTypes();
-        var supportTransliteration = outputTypes.Contains(LyricsTypeEnum.TRANSLITERATION);
-
-        var outputDict = new Dictionary<string, int>
+        
+        var lyricTypeSelectors = new Dictionary<LyricsTypeEnum, Func<LyricVo, string?>>
         {
-            [LyricsTypeEnum.ORIGIN.ToDescription()] = 0,
-            [LyricsTypeEnum.ORIGIN_TRANS.ToDescription()] = 0
+            { LyricsTypeEnum.ORIGIN, vo => vo.Lyric },
+            { LyricsTypeEnum.ORIGIN_TRANS, vo => vo.TranslateLyric },
+            { LyricsTypeEnum.TRANSLITERATION, vo => vo.TransliterationLyric }
         };
-        if (supportTransliteration)
+        
+        // 初始化输出字典
+        var outputDict = outputTypes
+            .Where(lyricTypeSelectors.ContainsKey)
+            .ToDictionary(type => type.ToDescription(), _ => 0);
+        
+        // 统计每种类型
+        foreach (var lyricVo in resDict.Values.Where(vo => vo.IsSuccess()).Select(vo => vo.Data.LyricVo))
         {
-            outputDict[LyricsTypeEnum.TRANSLITERATION.ToDescription()] = 0;
-        }
-
-        foreach (var lyricVo in from pair in resDict
-                 select pair.Value
-                 into vo
-                 where vo.IsSuccess()
-                 select vo.Data.LyricVo)
-        {
-            if (!string.IsNullOrEmpty(lyricVo.Lyric))
+            foreach (var type in outputTypes)
             {
-                outputDict[LyricsTypeEnum.ORIGIN.ToDescription()]++;
-            }
+                if (!lyricTypeSelectors.TryGetValue(type, out var selector)) continue;
 
-            if (!string.IsNullOrEmpty(lyricVo.TranslateLyric))
-            {
-                outputDict[LyricsTypeEnum.ORIGIN_TRANS.ToDescription()]++;
-            }
-
-            if (supportTransliteration && !string.IsNullOrEmpty(lyricVo.TransliterationLyric))
-            {
-                outputDict[LyricsTypeEnum.TRANSLITERATION.ToDescription()]++;
+                if (string.IsNullOrEmpty(selector(lyricVo))) continue;
+                
+                var key = type.ToDescription();
+                if (outputDict.ContainsKey(key))
+                {
+                    outputDict[key]++;
+                }
             }
         }
 
