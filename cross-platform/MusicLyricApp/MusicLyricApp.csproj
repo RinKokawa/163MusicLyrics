@@ -35,10 +35,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Resources\Profiles\Core14.profile.xml" />
-      <EmbeddedResource Include="Resources\Profiles\Core14.profile.xml" />
-      <None Update="Resources\Profiles\NLog.config">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <None Update="NLog.config">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Core14.profile.xml" />
     </ItemGroup>
 </Project>

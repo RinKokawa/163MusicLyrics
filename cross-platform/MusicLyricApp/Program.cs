@@ -16,7 +16,7 @@ sealed class Program
     {
         try
         {
-            LogManager.LoadConfiguration("Resources/Profiles/NLog.config");
+            LogManager.LoadConfiguration("NLog.config");
             Logger.Info("Application starting...");
             
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
