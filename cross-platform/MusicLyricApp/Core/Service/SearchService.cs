@@ -20,7 +20,8 @@ public class SearchService(SettingBean settingBean) : ISearchService
     private readonly Dictionary<SearchSourceEnum, IMusicApi> _api = new()
     {
         { SearchSourceEnum.QQ_MUSIC, new QQMusicApi(() => settingBean.Config.QQMusicCookie) },
-        { SearchSourceEnum.NET_EASE_MUSIC, new NetEaseMusicApi(() => settingBean.Config.NetEaseCookie) }
+        { SearchSourceEnum.NET_EASE_MUSIC, new NetEaseMusicApi(() => settingBean.Config.NetEaseCookie) },
+        { SearchSourceEnum.SODA_MUSIC, new SodaMusicApi() }
     };
 
     public IMusicApi GetMusicApi(SearchSourceEnum searchSource)

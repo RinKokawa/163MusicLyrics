@@ -148,6 +148,16 @@ public static class GlobalUtils
             }
         }
 
+        // 汽水音乐链接识别
+        if (input.Contains("qishui.douyin.com/s/"))
+        {
+            var match = Regex.Match(input, @"https?://qishui\.douyin\.com/s/[a-zA-Z0-9]+/?");
+            if (match.Success)
+            {
+                return new InputSongId(match.Value, SearchSourceEnum.SODA_MUSIC, SearchTypeEnum.SONG_ID);
+            }
+        }
+
         throw new MusicLyricException(ErrorMsgConst.INPUT_ID_ILLEGAL);
     }
 
