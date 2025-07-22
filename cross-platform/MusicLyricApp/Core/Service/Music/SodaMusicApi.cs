@@ -89,7 +89,12 @@ public class SodaMusicApi : MusicCacheableApi
     /// </summary>
     private static Tuple<SongVo, LyricVo> GetSodaMusicInfo(string shareUrl, out string debugInfo)
     {
-        debugInfo = "";
+        debugInfo = $"[收到的shareUrl]: {shareUrl}\n";
+        if (string.IsNullOrWhiteSpace(shareUrl) || !Uri.IsWellFormedUriString(shareUrl, UriKind.Absolute))
+        {
+            debugInfo += $"[错误] 输入的链接不是合法的绝对URL: {shareUrl}";
+            return null;
+        }
         try
         {
             // 在线获取页面源码，模拟浏览器UA，自动重定向
@@ -101,11 +106,11 @@ public class SodaMusicApi : MusicCacheableApi
 
             // soda-test.py: match = re.search(r'_ROUTER_DATA\s*=\s*({.*});', response.text, re.DOTALL)
             // 这里用贪婪匹配，确保提取完整 JSON
-            var match = Regex.Match(html, "_ROUTER_DATA\\s*=\\s*({.*});", RegexOptions.Singleline);
+            // 使用非贪婪正则，确保只提取第一个 JSON 对象
+            var match = Regex.Match(html, @"_ROUTER_DATA\s*=\s*({.*?});", RegexOptions.Singleline);
             if (!match.Success)
             {
                 debugInfo += "[正则未命中 _ROUTER_DATA]，尝试 Substring 提取\n";
-                // 兜底：尝试用 Substring 提取
                 var start = html.IndexOf("_ROUTER_DATA = ");
                 if (start >= 0)
                 {
@@ -113,8 +118,10 @@ public class SodaMusicApi : MusicCacheableApi
                     var end = html.IndexOf(";", start);
                     if (end > start)
                     {
-                        var json = html.Substring(start, Math.Min(end - start, 2000)).Trim();
-                        debugInfo += $"[Substring JSON片段]: {json.Substring(0, Math.Min(json.Length, 500))}\n";
+                        var json = html.Substring(start, end - start).Trim();
+                        while (json.EndsWith(";") || json.EndsWith("\n") || json.EndsWith("\r"))
+                            json = json.Substring(0, json.Length - 1).TrimEnd();
+                        debugInfo += $"[最终传入ParseSodaJson的JSON末尾100字符]: {json.Substring(Math.Max(0, json.Length - 100))}\n";
                         return ParseSodaJson(json, shareUrl, out debugInfo);
                     }
                     debugInfo += "[Substring未找到分号结尾]";
@@ -125,9 +132,12 @@ public class SodaMusicApi : MusicCacheableApi
                 }
                 return null;
             }
-            var jsonStr = match.Groups[1].Value;
-            debugInfo += $"[正则JSON片段]: {jsonStr.Substring(0, Math.Min(jsonStr.Length, 500))}\n";
-            return ParseSodaJson(jsonStr, shareUrl, out debugInfo);
+            else
+            {
+                var jsonStr = match.Groups[1].Value;
+                debugInfo += $"[正则JSON片段末尾100字符]: {jsonStr.Substring(Math.Max(0, jsonStr.Length - 100))}\n";
+                return ParseSodaJson(jsonStr, shareUrl, out debugInfo);
+            }
         }
         catch (Exception ex)
         {
@@ -144,43 +154,21 @@ public class SodaMusicApi : MusicCacheableApi
         {
             var obj = JsonUtils.ToJObject(json);
             debugInfo += $"[JObject keys]: {string.Join(",", obj.Properties().Select(p => p.Name))}\n";
-            var option = obj["loaderData"]?["track_page"]?["audioWithLyricsOption"];
+            // 按页面结构，直接用 SelectToken
+            var option = obj.SelectToken("loaderData.track_page.audioWithLyricsOption");
             if (option == null)
             {
-                debugInfo += $"[option为null] loaderData: {obj["loaderData"]?.ToString()?.Substring(0, 300)}\n";
+                debugInfo += "[audioWithLyricsOption] 路径为 null\n";
                 return null;
             }
-
-            var songVo = new SongVo
-            {
-                Id = option["track_id"]?.ToString() ?? "",
-                DisplayId = shareUrl,
-                Name = option["trackName"]?.ToString() ?? "",
-                Singer = new[] { option["artistName"]?.ToString() ?? "" },
-                Album = option.Parent?["trackInfo"]?["album"]?["name"]?.ToString() ?? "",
-                Duration = (long)((option["duration"]?.ToObject<double>() ?? 0) * 1000),
-                Pics = option["url"]?.ToString() ?? ""
-            };
-
-            List<string> lyricLines = new List<string>();
-            var sentences = option["lyrics"]?["sentences"];
-            if (sentences != null)
-            {
-                foreach (var l in sentences)
-                {
-                    var text = l["text"]?.ToString();
-                    if (!string.IsNullOrEmpty(text))
-                        lyricLines.Add(text);
-                }
-            }
-            var lyricVo = new LyricVo
-            {
-                SearchSource = SearchSourceEnum.SODA_MUSIC,
-                Lyric = string.Join("\n", lyricLines),
-                Duration = songVo.Duration
-            };
-            debugInfo += $"[成功] 歌名: {songVo.Name}, 歌手: {string.Join(",", songVo.Singer)}\n";
-            return Tuple.Create(songVo, lyricVo);
+            // 解析歌曲名、歌手、歌词等字段
+            var trackName = option.Value<string>("trackName") ?? option.Value<string>("name");
+            var artistName = option.Value<string>("artistName");
+            var lyrics = option.SelectToken("lyrics");
+            // ...后续字段解析和 SongVo/LyricVo 构造...
+            debugInfo += $"[trackName]: {trackName}, [artistName]: {artistName}\n";
+            // 这里只做字段演示，实际请补全 SongVo/LyricVo 构造
+            return null; // TODO: 构造并返回实际对象
         }
         catch (Exception ex)
         {

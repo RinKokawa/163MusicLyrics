@@ -105,7 +105,18 @@ public static class GlobalUtils
             return new InputSongId(input, searchSource, searchType);
         }
 
-        // URL 关键字提取
+        // 汽水音乐链接识别（必须放在 URL 关键字提取之前！）
+        if (input.Contains("qishui.douyin.com/s/"))
+        {
+            var match = Regex.Match(input, @"https?://qishui\.douyin\.com/s/[a-zA-Z0-9]+/?");
+            if (match.Success)
+            {
+                // 直接返回完整链接，不要只返回短码
+                return new InputSongId(match.Value, SearchSourceEnum.SODA_MUSIC, SearchTypeEnum.SONG_ID);
+            }
+        }
+
+        // URL 关键字提取（放在汽水音乐分支之后）
         var urlKeyword = SearchTypeKeywordDict[searchSource][searchType];
         var index = input.IndexOf(urlKeyword, StringComparison.Ordinal);
         if (index != -1)
@@ -122,7 +133,6 @@ public static class GlobalUtils
                     break;
                 }
             }
-
             return new InputSongId(sb.ToString(), searchSource, searchType);
         }
 
@@ -152,16 +162,6 @@ public static class GlobalUtils
                         return new InputSongId(songs[0].Id, searchSource, searchType);
                     }
                 }
-            }
-        }
-
-        // 汽水音乐链接识别
-        if (input.Contains("qishui.douyin.com/s/"))
-        {
-            var match = Regex.Match(input, @"https?://qishui\.douyin\.com/s/[a-zA-Z0-9]+/?");
-            if (match.Success)
-            {
-                return new InputSongId(match.Value, SearchSourceEnum.SODA_MUSIC, SearchTypeEnum.SONG_ID);
             }
         }
 
