@@ -740,6 +740,7 @@ public class InputSongId
     public InputSongId(string queryId, SearchSourceEnum searchSource, SearchTypeEnum searchType)
     {
         QueryId = queryId;
+        SongId = queryId; // 修正：默认SongId等于QueryId
         SearchSource = searchSource;
         SearchType = searchType;
     }

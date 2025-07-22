@@ -163,10 +163,10 @@ public class SodaMusicApi : MusicCacheableApi
             }
 
             // 字段提取
-            var trackId = option.Value<string>("track_id");
+            var trackId = option.Value<string>("track_id"); // 仅debug用
             var trackName = option.Value<string>("trackName") ?? option.Value<string>("name");
             var artistName = option.Value<string>("artistName");
-            var duration = option.Value<long?>("duration") ?? 0;
+            var duration = option.Value<double?>("duration") ?? 0;
             var url = option.Value<string>("url");
             var lyricsToken = option.SelectToken("lyrics.sentences");
             string lyric = "";
@@ -180,16 +180,16 @@ public class SodaMusicApi : MusicCacheableApi
                 lyric = option.SelectToken("lyrics.text")?.ToString() ?? "";
             }
 
-            // 构造 SongVo
+            // 构造 SongVo，所有key都用分享链接
             var songVo = new SongVo
             {
-                Id = trackId ?? url ?? shareUrl,
-                DisplayId = trackId ?? url ?? shareUrl,
+                Id = shareUrl,
+                DisplayId = shareUrl,
                 Name = trackName ?? "",
                 Singer = string.IsNullOrWhiteSpace(artistName) ? new string[0] : new[] { artistName },
                 Album = "",
                 Pics = "",
-                Duration = duration
+                Duration = (long)(duration * 1000) // 转为ms
             };
 
             // 构造 LyricVo
@@ -199,10 +199,12 @@ public class SodaMusicApi : MusicCacheableApi
                 Lyric = lyric,
                 TranslateLyric = "",
                 TransliterationLyric = "",
-                Duration = duration
+                Duration = (long)(duration * 1000)
             };
 
-            debugInfo += $"[trackId]: {trackId}, [trackName]: {trackName}, [artistName]: {artistName}, [duration]: {duration}\n";
+            debugInfo += $"[track_id]: {trackId}\n";
+            debugInfo += $"[trackName]: {trackName}, [artistName]: {artistName}, [duration]: {duration}\n";
+            debugInfo += $"[lyric preview]: {lyric?.Substring(0, Math.Min(100, lyric.Length))}\n";
             debugInfo += $"[lyric length]: {lyric?.Length ?? 0}\n";
 
             return Tuple.Create(songVo, lyricVo);
