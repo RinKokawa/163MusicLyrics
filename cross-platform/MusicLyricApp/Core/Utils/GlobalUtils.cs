@@ -81,6 +81,22 @@ public static class GlobalUtils
             throw new MusicLyricException(ErrorMsgConst.INPUT_ID_ILLEGAL);
         }
 
+        // 汽水音乐链接识别（必须放在最前面！）
+        if (input.Contains("qishui.douyin.com/s/"))
+        {
+            var match = Regex.Match(input, @"https?://qishui\.douyin\.com/s/[a-zA-Z0-9]+/?");
+            if (match.Success)
+            {
+                // 直接返回完整链接，不要只返回短码
+                Logger.Debug($"[CheckInputId] 命中汽水音乐链接: {match.Value}");
+                return new InputSongId(match.Value, SearchSourceEnum.SODA_MUSIC, SearchTypeEnum.SONG_ID);
+            }
+            else
+            {
+                Logger.Debug($"[CheckInputId] 汽水音乐链接正则未命中: {input}");
+            }
+        }
+
         // 自动识别音乐提供商
         foreach (var pair in SearchSourceKeywordDict.Where(pair => input.Contains(pair.Value)))
         {
@@ -96,24 +112,15 @@ public static class GlobalUtils
         // 网易云，纯数字，直接通过
         if (searchSource == SearchSourceEnum.NET_EASE_MUSIC && CheckNum(input))
         {
+            Logger.Debug($"[CheckInputId] 命中网易云纯数字: {input}");
             return new InputSongId(input, searchSource, searchType);
         }
 
         // QQ 音乐，数字+字母，直接通过
         if (searchSource == SearchSourceEnum.QQ_MUSIC && Regex.IsMatch(input, @"^[a-zA-Z0-9]*$"))
         {
+            Logger.Debug($"[CheckInputId] 命中QQ音乐数字+字母: {input}");
             return new InputSongId(input, searchSource, searchType);
-        }
-
-        // 汽水音乐链接识别（必须放在 URL 关键字提取之前！）
-        if (input.Contains("qishui.douyin.com/s/"))
-        {
-            var match = Regex.Match(input, @"https?://qishui\.douyin\.com/s/[a-zA-Z0-9]+/?");
-            if (match.Success)
-            {
-                // 直接返回完整链接，不要只返回短码
-                return new InputSongId(match.Value, SearchSourceEnum.SODA_MUSIC, SearchTypeEnum.SONG_ID);
-            }
         }
 
         // URL 关键字提取（放在汽水音乐分支之后）
@@ -133,6 +140,7 @@ public static class GlobalUtils
                     break;
                 }
             }
+            Logger.Debug($"[CheckInputId] 命中URL关键字提取: {sb}");
             return new InputSongId(sb.ToString(), searchSource, searchType);
         }
 
@@ -159,12 +167,14 @@ public static class GlobalUtils
 
                     if (songs.Length > 0)
                     {
+                        Logger.Debug($"[CheckInputId] 命中QQ音乐短链接: {songs[0].Id}");
                         return new InputSongId(songs[0].Id, searchSource, searchType);
                     }
                 }
             }
         }
 
+        Logger.Debug($"[CheckInputId] 未命中任何分支，抛出异常: {input}");
         throw new MusicLyricException(ErrorMsgConst.INPUT_ID_ILLEGAL);
     }
 
