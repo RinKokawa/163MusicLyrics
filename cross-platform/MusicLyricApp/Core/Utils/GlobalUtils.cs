@@ -34,6 +34,7 @@ public static class GlobalUtils
     {
         { SearchSourceEnum.NET_EASE_MUSIC, "163.com" },
         { SearchSourceEnum.QQ_MUSIC, "qq.com" },
+        { SearchSourceEnum.SODA_MUSIC, "qishui.douyin.com" }, // 新增汽水音乐
     };
 
     public static readonly Dictionary<SearchSourceEnum, Dictionary<SearchTypeEnum, string>> SearchTypeKeywordDict =
@@ -53,6 +54,12 @@ public static class GlobalUtils
                     { SearchTypeEnum.SONG_ID, "songDetail/" },
                     { SearchTypeEnum.ALBUM_ID, "albumDetail/" },
                     { SearchTypeEnum.PLAYLIST_ID, "playlist/" },
+                }
+            },
+            {
+                SearchSourceEnum.SODA_MUSIC, new Dictionary<SearchTypeEnum, string>
+                {
+                    { SearchTypeEnum.SONG_ID, "qishui.douyin.com/s/" }, // 只支持单曲分享链接
                 }
             }
         };
