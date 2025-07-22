@@ -90,32 +90,40 @@ public class SodaMusicApi : MusicCacheableApi
     {
         try
         {
-            var html = HttpUtils.HttpGet(shareUrl, "text/html");
+            // 在线获取页面源码，模拟浏览器UA，自动重定向
+            var handler = new System.Net.Http.HttpClientHandler { AllowAutoRedirect = true };
+            using var client = new System.Net.Http.HttpClient(handler);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36");
+            var html = client.GetStringAsync(shareUrl).Result;
+
+            // 提取 _ROUTER_DATA JSON
             var match = Regex.Match(html, "_ROUTER_DATA\\s*=\\s*({.*?});", RegexOptions.Singleline);
             if (!match.Success) return null;
             var json = match.Groups[1].Value;
             var obj = JsonUtils.ToJObject(json);
             var option = obj["loaderData"]?["track_page"]?["audioWithLyricsOption"];
             if (option == null) return null;
-            // 组装 SongVo
+
             var songVo = new SongVo
             {
                 Id = option["track_id"]?.ToString() ?? "",
                 DisplayId = shareUrl,
                 Name = option["trackName"]?.ToString() ?? "",
                 Singer = new[] { option["artistName"]?.ToString() ?? "" },
-                Album = option["trackInfo"]?["album"]?["name"]?.ToString() ?? "",
-                Duration = (long)(option["duration"]?.ToObject<double>() * 1000 ?? 0),
+                Album = option.Parent?["trackInfo"]?["album"]?["name"]?.ToString() ?? "",
+                Duration = (long)((option["duration"]?.ToObject<double>() ?? 0) * 1000),
                 Pics = option["url"]?.ToString() ?? ""
             };
-            // 组装 LyricVo
+
             List<string> lyricLines = new List<string>();
-            var sentences = option["lyrics"]?["sentences"]?.ToObject<List<dynamic>>();
+            var sentences = option["lyrics"]?["sentences"];
             if (sentences != null)
             {
                 foreach (var l in sentences)
                 {
-                    lyricLines.Add(l["text"].ToString());
+                    var text = l["text"]?.ToString();
+                    if (!string.IsNullOrEmpty(text))
+                        lyricLines.Add(text);
                 }
             }
             var lyricVo = new LyricVo
@@ -126,8 +134,10 @@ public class SodaMusicApi : MusicCacheableApi
             };
             return Tuple.Create(songVo, lyricVo);
         }
-        catch
+        catch (Exception ex)
         {
+            // 可选：输出详细日志，便于排查
+            System.Diagnostics.Debug.WriteLine($"[SodaMusicApi] 获取失败: {ex.Message}\n{ex.StackTrace}");
             return null;
         }
     }
