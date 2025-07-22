@@ -172,7 +172,16 @@ public class SodaMusicApi : MusicCacheableApi
             string lyric = "";
             if (lyricsToken != null && lyricsToken.Type == Newtonsoft.Json.Linq.JTokenType.Array)
             {
-                lyric = string.Join("\n", lyricsToken.Select(l => l.Value<string>("text")));
+                // 拼接为标准LRC格式
+                var sb = new System.Text.StringBuilder();
+                foreach (var l in lyricsToken)
+                {
+                    var startMs = l.Value<long?>("startMs") ?? 0;
+                    var text = l.Value<string>("text") ?? "";
+                    var timestamp = MsToLrcTimestamp(startMs);
+                    sb.Append(timestamp).Append(text).Append("\n");
+                }
+                lyric = sb.ToString().TrimEnd();
             }
             else
             {
@@ -214,5 +223,15 @@ public class SodaMusicApi : MusicCacheableApi
             debugInfo += $"[Parse异常]: {ex.Message}\n{ex.StackTrace}";
             return null;
         }
+    }
+
+    // 新增：毫秒转LRC时间戳
+    private static string MsToLrcTimestamp(long ms)
+    {
+        var totalSeconds = ms / 1000;
+        var minutes = totalSeconds / 60;
+        var seconds = totalSeconds % 60;
+        var milliseconds = ms % 1000;
+        return $"[{minutes:D2}:{seconds:D2}.{milliseconds:D3}]";
     }
 } 
